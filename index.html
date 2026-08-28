@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>三国杀身份局 Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-block">
+          <h1>三国杀身份局 Demo</h1>
+          <p>8人身份局 · 人机对战 · 标准/风/火/林/山武将资料</p>
+        </div>
+        <nav class="top-actions" aria-label="玩家状态">
+          <span>Lv 159</span>
+          <span>铜钱 620</span>
+          <span>VIP 6</span>
+        </nav>
+      </header>
+
+      <main>
+        <section id="home" class="panel active lobby-panel" aria-label="主页面">
+          <aside class="lobby-rail">
+            <button data-enter="fengshen">封神</button>
+            <button data-enter="heroes">武将</button>
+            <button data-enter="custom">创作</button>
+            <button data-enter="cards">牌堆</button>
+          </aside>
+          <div class="lobby-stage">
+            <button class="lobby-card lobby-card-large" data-enter="game">
+              <span class="lobby-art war-art">征</span>
+              <strong>经典场</strong>
+              <small>身份局 · 快速匹配</small>
+            </button>
+            <button class="lobby-card" data-enter="heroes">
+              <span class="lobby-art hero-art-tile">将</span>
+              <strong>武将录</strong>
+              <small>查看风林火山与自创武将</small>
+            </button>
+            <button class="lobby-card" data-enter="custom">
+              <span class="lobby-art forge-art">创</span>
+              <strong>创作工坊</strong>
+              <small>制作可入局武将与卡牌</small>
+            </button>
+            <button class="lobby-card" data-enter="cards">
+              <span class="lobby-art deck-art">牌</span>
+              <strong>牌堆阁</strong>
+              <small>查看基础牌、锦囊与装备</small>
+            </button>
+            <button class="lobby-card" data-enter="fengshen">
+              <span class="lobby-art divine-art">神</span>
+              <strong>封神之路</strong>
+              <small>五关单挑 · 胜利回满体力</small>
+            </button>
+            <a class="lobby-card lobby-link-card" href="./README.md">
+              <span class="lobby-art doc-art">文</span>
+              <strong>README</strong>
+              <small>查看运行方式、文件结构与测试命令</small>
+            </a>
+            <a class="lobby-card lobby-link-card" href="./">
+              <span class="lobby-art folder-art">夹</span>
+              <strong>项目文件夹</strong>
+              <small>打开 index、app、styles 与 scripts</small>
+            </a>
+          </div>
+          <nav class="lobby-dock" aria-label="大厅快捷入口">
+            <button data-enter="game">开始</button>
+            <button data-enter="fengshen">封神</button>
+            <button data-enter="heroes">武将</button>
+            <button data-enter="custom">自创</button>
+            <button data-enter="cards">牌堆</button>
+            <a href="./README.md">说明</a>
+          </nav>
+        </section>
+
+        <section id="fengshen" class="panel" aria-label="封神之路">
+          <div class="module-header">
+            <button type="button" class="back-btn" data-back-home>返回</button>
+            <div>
+              <h2>封神之路</h2>
+              <p>选择一名武将，连续挑战五名电脑武将；每关胜利后回满体力并进入下一关。</p>
+            </div>
+          </div>
+          <div class="fengshen-layout">
+            <section class="fengshen-start">
+              <div>
+                <span class="label">挑战武将</span>
+                <h3>五关单挑试炼</h3>
+                <p>每一关都是 1v1 对战。你击败本关武将后会回满体力、清空判定与装备状态，并自动进入下一关。</p>
+              </div>
+              <label>
+                选择武将
+                <select id="fengshenHeroSelect"></select>
+              </label>
+              <button id="startFengshenBtn" class="primary" type="button">开始封神之路</button>
+            </section>
+            <aside class="fengshen-rules">
+              <strong>规则</strong>
+              <span>一共五关</span>
+              <span>每关对战一名随机武将</span>
+              <span>获胜后回满体力进入下一关</span>
+              <span>挑战失败后可重新选择武将开始</span>
+            </aside>
+          </div>
+        </section>
+
+        <section id="game" class="panel" aria-label="对局">
+          <div class="module-header">
+            <button type="button" class="back-btn" data-back-home>返回</button>
+            <div>
+              <h2>经典身份局</h2>
+              <p>8人身份局 · 玩家对电脑 · 回合内可操作技能与手牌</p>
+            </div>
+          </div>
+          <div class="game-layout">
+            <aside class="side-panel">
+              <div class="phase-box">
+                <span class="label">当前阶段</span>
+                <strong id="phaseText">准备中</strong>
+              </div>
+              <div class="identity-box">
+                <span class="label">你的身份</span>
+                <strong id="myRole">?</strong>
+                <small id="goalText">点击“开始新局”</small>
+              </div>
+              <div class="turn-guide">
+                <div>
+                  <span class="label">当前行动者</span>
+                  <strong id="activeActor">未开始</strong>
+                </div>
+                <div>
+                  <span class="label">操作提示</span>
+                  <p id="nextActionText">开始新局后查看提示。</p>
+                </div>
+              </div>
+              <div class="identity-board">
+                <div class="identity-board-head">
+                  <strong>身份态势</strong>
+                  <span id="identityHint">未开局</span>
+                </div>
+                <div id="identityBoard" class="identity-board-body"></div>
+              </div>
+              <div id="resultPanel" class="result-panel" hidden></div>
+              <div class="seat-inspector">
+                <div class="seat-inspector-head">
+                  <strong>角色详情</strong>
+                  <span id="seatInspectorHint">点击角色</span>
+                </div>
+                <div id="seatInspectorBody" class="seat-inspector-body"></div>
+              </div>
+              <div class="pile-inspector">
+                <div class="pile-inspector-head">
+                  <strong>牌堆观察</strong>
+                  <span id="pileInspectorHint">点击牌堆</span>
+                </div>
+                <div id="pileInspectorBody" class="pile-inspector-body"></div>
+              </div>
+              <label class="hero-select-label" for="playerRoleSelect">下局你的身份</label>
+              <select id="playerRoleSelect">
+                <option value="random">随机身份</option>
+                <option value="主公">主公</option>
+                <option value="忠臣">忠臣</option>
+                <option value="反贼">反贼</option>
+                <option value="内奸">内奸</option>
+              </select>
+              <label class="hero-select-label" for="playerHeroSelect">下局你的武将</label>
+              <select id="playerHeroSelect"></select>
+              <div class="skill-panel">
+                <div class="skill-panel-head">
+                  <strong>武将技能</strong>
+                  <span id="skillHint">未入局</span>
+                </div>
+                <div id="playerSkills" class="player-skills"></div>
+              </div>
+              <div class="controls">
+                <button id="newGameBtn" class="primary">开始新局</button>
+                <button id="endTurnBtn">结束出牌</button>
+              </div>
+              <div class="tips">
+                <strong>可用操作</strong>
+                <p>你的回合开始会自动摸牌。选择手牌后点目标角色。杀、顺手牵羊、过河拆桥、决斗需要目标；桃在自己受伤时可用。</p>
+              </div>
+            </aside>
+
+            <section class="table-wrap">
+              <div id="table" class="table" aria-label="牌桌">
+                <div class="table-center">
+                  <div id="resolveBanner" class="resolve-banner">
+                    <span class="resolve-label">牌局准备</span>
+                    <strong>等待开始</strong>
+                  </div>
+                  <div class="deck-strip">
+                    <div class="deck-stack">
+                      <span>牌堆</span>
+                      <strong id="deckCount">0</strong>
+                    </div>
+                    <div class="discard-stack">
+                      <span>弃牌</span>
+                      <strong id="discardCount">0</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="hand-area">
+                <div class="hand-header">
+                  <strong>你的手牌</strong>
+                  <span id="handHint">尚未开始</span>
+                  <div class="game-controls">
+                    <select id="speedControl" title="游戏速度">
+                      <option value="1500">慢速</option>
+                      <option value="800" selected>正常</option>
+                      <option value="300">快速</option>
+                      <option value="50">极速</option>
+                    </select>
+                    <button id="surrenderBtn" class="surrender-btn" hidden>投降</button>
+                  </div>
+                </div>
+                <div id="actionPrompt" class="action-prompt">开始新局后自动摸牌。</div>
+                <div id="phaseTrack" class="phase-track" aria-label="当前操作模式"></div>
+                <div id="selectedCardInfo" class="selected-card-info">点击手牌可查看用途，需要目标的牌会提示可选角色。</div>
+                <div id="hand" class="hand"></div>
+              </div>
+            </section>
+
+            <aside class="log-panel">
+              <div class="log-title">战报</div>
+              <ol id="log" class="log"></ol>
+            </aside>
+          </div>
+        </section>
+
+        <section id="heroes" class="panel" aria-label="武将资料">
+          <div class="module-header">
+            <button type="button" class="back-btn" data-back-home>返回</button>
+            <div>
+              <h2>武将录</h2>
+              <p>检索武将、势力、扩展包与技能文本</p>
+            </div>
+          </div>
+          <div class="library-toolbar">
+            <div class="filter-group" id="packFilters"></div>
+            <input id="heroSearch" type="search" placeholder="搜索武将、势力、技能" />
+          </div>
+          <div id="heroGrid" class="hero-grid"></div>
+        </section>
+
+        <section id="custom" class="panel" aria-label="自创武将">
+          <div class="module-header">
+            <button type="button" class="back-btn" data-back-home>返回</button>
+            <div>
+              <h2>创作工坊</h2>
+              <p>创建可在下一局使用的武将，也可以制作可结算的游戏牌</p>
+            </div>
+          </div>
+          <div class="custom-layout">
+            <form id="customHeroForm" class="custom-form">
+              <h2>创建自创武将</h2>
+              <div class="form-grid">
+                <label>
+                  武将名
+                  <input id="customName" maxlength="8" required placeholder="例如：陈到" />
+                </label>
+                <label>
+                  势力
+                  <select id="customCamp">
+                    <option>魏</option>
+                    <option>蜀</option>
+                    <option>吴</option>
+                    <option>群</option>
+                    <option>神</option>
+                  </select>
+                </label>
+                <label>
+                  体力
+                  <select id="customHp">
+                    <option>3</option>
+                    <option selected>4</option>
+                    <option>5</option>
+                  </select>
+                </label>
+                <label>
+                  图片链接
+                  <input id="customImageUrl" type="url" placeholder="https://..." />
+                </label>
+                <label class="wide">
+                  上传图片
+                  <input id="customImageFile" type="file" accept="image/*" />
+                </label>
+                <div class="wide ai-hero-builder">
+                  <div class="effect-head">
+                    <strong>AI 制作武将</strong>
+                    <span>输入你的创作方向，AI 会生成技能文本并填入下方可运行规则。API Key 只在本浏览器本次请求中使用。</span>
+                  </div>
+                  <label>
+                    OpenAI API Key
+                    <input id="aiHeroApiKey" type="password" autocomplete="off" placeholder="sk-..." />
+                  </label>
+                  <label>
+                    GPT 模型
+                    <input id="aiHeroModel" value="gpt-5.6" placeholder="例如 gpt-5.6" />
+                  </label>
+                  <label class="wide">
+                    创作要求
+                    <textarea id="aiHeroPrompt" rows="3" placeholder="例如：设计一名魏势力谋士，3体力，偏控制和摸牌，强度接近风林火山武将。"></textarea>
+                  </label>
+                  <button id="generateHeroAiBtn" type="button">AI 生成草案</button>
+                  <span id="aiHeroStatus">未连接</span>
+                </div>
+                <label class="wide">
+                  技能文本
+                  <textarea id="customSkills" rows="6" placeholder="直接写技能介绍，每行一个。例如：&#10;烈心：当你使用【杀】造成伤害后，你回复1点体力并摸一张牌。&#10;筹谋：摸牌阶段，你额外摸两张牌。&#10;焚营：出牌阶段，你可以令一名其他角色受到1点火焰伤害。"></textarea>
+                </label>
+                <div class="wide code-hero-builder">
+                  <div class="effect-head">
+                    <strong>JS 高级编辑器</strong>
+                    <span>可直接返回一个武将对象；留空时使用上面的文本解析。代码仅在本地浏览器运行。</span>
+                  </div>
+                  <textarea id="customHeroJs" rows="10" spellcheck="false" placeholder="return hero({
+  name: '新将',
+  camp: '蜀',
+  hp: 4,
+  image: '',
+  skills: [
+    '烈心：当你使用【杀】造成伤害后，你回复1点体力并摸一张牌。'
+  ],
+  customRules: [
+    rule('slashDamage', 'phase', 'none', 'self', [
+      effect('heal', 1),
+      effect('draw', 1)
+    ])
+  ]
+});"></textarea>
+                  <div class="code-hero-actions">
+                    <button id="applyHeroJsBtn" type="button">应用代码到预览</button>
+                    <button id="insertHeroJsExampleBtn" type="button">插入示例</button>
+                    <span id="customHeroJsStatus">未启用</span>
+                  </div>
+                </div>
+                <div class="wide skill-rule-guide">
+                  <article>
+                    <strong>锁定技</strong>
+                    <span>满足条件时必须生效，玩家不能选择不发动。适合被动、持续、强制触发效果。</span>
+                  </article>
+                  <article>
+                    <strong>限定技</strong>
+                    <span>一局游戏内至多发动一次；通常由玩家在合法时机选择发动。</span>
+                  </article>
+                  <article>
+                    <strong>觉醒技</strong>
+                    <span>满足时机和条件时必须发动，且一局只能发动一次，通常会改变体力上限或获得/失去技能。</span>
+                  </article>
+                </div>
+                <div class="wide skill-effect-builder" id="customSkillRuleBuilder">
+                  <div class="effect-head">
+                    <strong>文本解析结果</strong>
+                    <span>系统会从技能文本自动转成可运行规则。无法识别的技能仍会保存为文字技能。</span>
+                  </div>
+                  <div class="skill-rule-row" data-rule-index="0">
+                    <strong>技能1</strong>
+                    <label>时机<select class="skillRuleTiming"><option value="none">只显示文字</option><option value="play">出牌阶段主动发动</option><option value="prepare">准备阶段触发</option><option value="draw">摸牌阶段触发</option><option value="damageTaken">受到伤害后触发</option><option value="slashDamage">使用杀造成伤害时</option><option value="handLimit">弃牌阶段手牌上限</option></select></label>
+                    <label>限制<select class="skillRuleLimit"><option value="phase">每阶段一次</option><option value="none">不限次数</option><option value="game">限定技/一局一次</option><option value="forced">锁定技</option></select></label>
+                    <label>代价<select class="skillRuleCost"><option value="none">无</option><option value="discard1">弃1张手牌</option><option value="loseHp1">失去1点体力</option></select></label>
+                    <label>目标<select class="skillRuleTarget"><option value="self">自己</option><option value="other">一名其他角色</option><option value="damaged">一名受伤角色</option><option value="enemy">一名敌方倾向角色</option><option value="source">伤害来源</option></select></label>
+                    <label>效果<select class="skillRuleAction"><option value="draw">摸牌</option><option value="heal">回复体力</option><option value="damage">造成普通伤害</option><option value="fireDamage">造成火焰伤害</option><option value="discardTarget">弃置目标一张牌</option><option value="stealTarget">获得目标一张牌</option><option value="slashLimit">本回合杀次数+数值</option><option value="slashDamage">本回合杀伤害+数值</option><option value="handLimit">手牌上限+数值</option></select></label>
+                    <label>数值<select class="skillRuleAmount"><option>1</option><option>2</option><option>3</option></select></label>
+                  </div>
+                  <div class="skill-rule-row" data-rule-index="1">
+                    <strong>技能2</strong>
+                    <label>时机<select class="skillRuleTiming"></select></label><label>限制<select class="skillRuleLimit"></select></label><label>代价<select class="skillRuleCost"></select></label><label>目标<select class="skillRuleTarget"></select></label><label>效果<select class="skillRuleAction"></select></label><label>数值<select class="skillRuleAmount"></select></label>
+                  </div>
+                  <div class="skill-rule-row" data-rule-index="2">
+                    <strong>技能3</strong>
+                    <label>时机<select class="skillRuleTiming"></select></label><label>限制<select class="skillRuleLimit"></select></label><label>代价<select class="skillRuleCost"></select></label><label>目标<select class="skillRuleTarget"></select></label><label>效果<select class="skillRuleAction"></select></label><label>数值<select class="skillRuleAmount"></select></label>
+                  </div>
+                  <div class="skill-rule-row" data-rule-index="3">
+                    <strong>技能4</strong>
+                    <label>时机<select class="skillRuleTiming"></select></label><label>限制<select class="skillRuleLimit"></select></label><label>代价<select class="skillRuleCost"></select></label><label>目标<select class="skillRuleTarget"></select></label><label>效果<select class="skillRuleAction"></select></label><label>数值<select class="skillRuleAmount"></select></label>
+                  </div>
+                  <div id="skillEffectSummary" class="effect-summary-list"></div>
+                </div>
+              </div>
+              <div class="validation-box" id="customValidation">直接填写技能介绍即可；系统会自动解析可运行部分。</div>
+              <div class="form-actions">
+                <button class="primary" type="submit">添加到游戏</button>
+                <button type="button" id="clearCustomForm">清空</button>
+              </div>
+            </form>
+            <aside class="custom-preview">
+              <h2>预览</h2>
+              <article id="customPreviewCard" class="hero-card preview-card"></article>
+            </aside>
+          </div>
+          <div class="custom-list-head">
+            <h2>已保存的自创武将</h2>
+            <span id="customCount">0 名</span>
+          </div>
+          <div id="customHeroGrid" class="hero-grid"></div>
+        </section>
+
+        <section id="cards" class="panel" aria-label="牌堆说明">
+          <div class="module-header">
+            <button type="button" class="back-btn" data-back-home>返回</button>
+            <div>
+              <h2>牌堆阁</h2>
+              <p>查看牌堆结构，并添加下一局会洗入牌堆的自定义牌</p>
+            </div>
+          </div>
+          <div class="deck-page">
+            <section>
+              <h2>Demo 牌堆范围</h2>
+              <p>本 demo 使用《三国杀》标准玩法的核心牌型，覆盖基础牌、锦囊牌、延时锦囊、装备牌；对局引擎实现了其中最适合网页 demo 的常用效果。</p>
+            </section>
+            <section class="card-library-panel">
+              <div class="library-toolbar">
+                <div class="filter-group" id="cardTypeFilters"></div>
+                <input id="cardSearch" type="search" placeholder="搜索牌名、类型、规则" />
+              </div>
+              <div id="cardDetail" class="card-detail"></div>
+            </section>
+            <div class="card-creator">
+              <form id="customCardForm" class="custom-form">
+                <h2>创建自定义游戏牌</h2>
+                <div class="form-grid">
+                  <label>
+                    牌名
+                    <input id="customCardName" maxlength="8" required placeholder="例如：火袭" />
+                  </label>
+                  <label>
+                    类型
+                    <select id="customCardType">
+                      <option>基础</option>
+                      <option selected>锦囊</option>
+                      <option>延时锦囊</option>
+                      <option>武器</option>
+                      <option>防具</option>
+                      <option>坐骑</option>
+                    </select>
+                  </label>
+                  <label>
+                    加入牌堆数量
+                    <select id="customCardCount">
+                      <option>1</option>
+                      <option selected>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </select>
+                  </label>
+                  <label>
+                    目标
+                    <select id="customCardTarget">
+                      <option value="none">不需要目标</option>
+                      <option value="one" selected>一名其他角色</option>
+                    </select>
+                  </label>
+                  <label>
+                    运行效果
+                    <select id="customCardEffect"></select>
+                  </label>
+                  <label>
+                    牌面风格
+                    <input id="customCardColor" type="color" value="#d39a4b" />
+                  </label>
+                  <label class="wide">
+                    规则描述
+                    <textarea id="customCardText" rows="3" required placeholder="例如：出牌阶段，对一名其他角色使用，令其受到1点伤害。"></textarea>
+                  </label>
+                </div>
+                <div class="validation-box" id="customCardValidation">选择一个运行效果后，这张牌会进入下一局牌堆。</div>
+                <div class="form-actions">
+                  <button class="primary" type="submit">加入牌堆</button>
+                  <button type="button" id="clearCustomCardForm">清空</button>
+                </div>
+              </form>
+              <aside class="custom-preview">
+                <h2>牌面预览</h2>
+                <button id="customCardPreview" class="card card-trick preview-game-card" type="button">
+                  <small>锦囊</small>
+                  <strong>新牌</strong>
+                  <span class="suit">自</span>
+                  <span class="card-hint">选目标</span>
+                </button>
+              </aside>
+            </div>
+            <div class="custom-list-head">
+              <h2>已保存的自定义牌</h2>
+              <span id="customCardCountText">0 张</span>
+            </div>
+            <div id="customCardGrid" class="card-list"></div>
+            <div id="deckStats" class="deck-stats"></div>
+            <div id="cardList" class="card-list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div id="toastLayer" class="toast-layer" aria-live="polite"></div>
+    <div id="gameModal" class="game-modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-backdrop"></div>
+      <div class="modal-panel">
+        <h3 id="modalTitle" class="modal-title"></h3>
+        <p id="modalDesc" class="modal-desc"></p>
+        <div id="modalBody" class="modal-body"></div>
+        <div id="modalActions" class="modal-actions"></div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
