@@ -19,13 +19,26 @@
           <span id="profileCoins">铜钱 0</span>
           <span id="profileVip">VIP 1</span>
         </nav>
+        <section class="account-panel" aria-label="账号存档">
+          <span id="accountStatus">游客存档</span>
+          <input id="accountName" autocomplete="username" maxlength="16" placeholder="账号" />
+          <input id="accountPassword" autocomplete="current-password" maxlength="64" placeholder="密码" type="password" />
+          <button id="loginBtn" type="button">登录</button>
+          <button id="registerBtn" type="button">注册</button>
+          <button id="syncSaveBtn" type="button">同步</button>
+          <button id="logoutBtn" type="button" hidden>退出</button>
+        </section>
       </header>
 
       <main>
         <section id="home" class="panel active lobby-panel" aria-label="主页面">
           <aside class="lobby-rail">
             <button data-enter="fengshen">封神</button>
+            <button data-enter="bailian">百炼</button>
+            <button data-enter="chuge">楚歌</button>
             <button data-enter="heroes">武将</button>
+            <button data-enter="shop">商城</button>
+            <button data-enter="recruit">招募</button>
             <button data-enter="custom">创作</button>
             <button data-enter="cards">牌堆</button>
           </aside>
@@ -45,6 +58,16 @@
               <strong>创作工坊</strong>
               <small>制作可入局武将与卡牌</small>
             </button>
+            <button class="lobby-card" data-enter="shop">
+              <span class="lobby-art shop-art">商</span>
+              <strong>武将商城</strong>
+              <small>使用铜钱直接购买武将</small>
+            </button>
+            <button class="lobby-card" data-enter="recruit">
+              <span class="lobby-art recruit-art">募</span>
+              <strong>招募台</strong>
+              <small>10铜钱单抽 · 50铜钱五连</small>
+            </button>
             <button class="lobby-card" data-enter="cards">
               <span class="lobby-art deck-art">牌</span>
               <strong>牌堆阁</strong>
@@ -55,11 +78,25 @@
               <strong>封神之路</strong>
               <small>五关单挑 · 胜利回满体力</small>
             </button>
+            <button class="lobby-card" data-enter="bailian">
+              <span class="lobby-art temper-art">炼</span>
+              <strong>百炼成钢</strong>
+              <small>标将试炼 · 通关得界将</small>
+            </button>
+            <button class="lobby-card" data-enter="chuge">
+              <span class="lobby-art war-art">困</span>
+              <strong>四面楚歌</strong>
+              <small>一人破围 · 四敌围攻</small>
+            </button>
           </div>
           <nav class="lobby-dock" aria-label="大厅快捷入口">
             <button data-enter="game">开始</button>
             <button data-enter="fengshen">封神</button>
+            <button data-enter="bailian">百炼</button>
+            <button data-enter="chuge">楚歌</button>
             <button data-enter="heroes">武将</button>
+            <button data-enter="shop">商城</button>
+            <button data-enter="recruit">招募</button>
             <button data-enter="custom">自创</button>
             <button data-enter="cards">牌堆</button>
           </nav>
@@ -92,6 +129,65 @@
               <span>每关对战一名随机武将</span>
               <span>获胜后回满体力进入下一关</span>
               <span>挑战失败后可重新选择武将开始</span>
+            </aside>
+          </div>
+        </section>
+
+        <section id="bailian" class="panel" aria-label="百炼成钢">
+          <div class="module-header">
+            <button type="button" class="back-btn" data-back-home>返回</button>
+            <div>
+              <h2>百炼成钢</h2>
+              <p>使用标准武将完成剧情试炼，战胜指定敌人后解锁对应界限突破武将。</p>
+            </div>
+          </div>
+          <div class="bailian-layout">
+            <section class="bailian-story">
+              <span class="label">剧情试炼</span>
+              <h3 id="bailianTitle">曹操·乱世奸雄</h3>
+              <p id="bailianStory">选择章节后查看背景故事。</p>
+              <strong id="bailianObjective">目标</strong>
+              <div class="bailian-actions">
+                <select id="bailianChapterSelect"></select>
+                <button id="startBailianBtn" class="primary" type="button">开始试炼</button>
+              </div>
+            </section>
+            <aside class="bailian-story">
+              <span class="label">奖励</span>
+              <div id="bailianReward">通关获得对应界限突破武将。</div>
+            </aside>
+          </div>
+          <div id="bailianChapterGrid" class="bailian-grid"></div>
+        </section>
+
+        <section id="chuge" class="panel" aria-label="四面楚歌">
+          <div class="module-header">
+            <button type="button" class="back-btn" data-back-home>返回</button>
+            <div>
+              <h2>四面楚歌</h2>
+              <p>主角一人被四名敌人围攻；上下左右敌人与主角距离均为 1。</p>
+            </div>
+          </div>
+          <div class="fengshen-layout">
+            <section class="fengshen-start">
+              <div>
+                <span class="label">突围武将</span>
+                <h3>一打四生存战</h3>
+                <p>主角开局额外摸 6 张牌，体力上限和当前体力翻倍，每个出牌阶段额外可使用 5 张【杀】，并获得限定技【绝境】。</p>
+              </div>
+              <label>
+                选择主角
+                <select id="chugeHeroSelect"></select>
+              </label>
+              <button id="startChugeBtn" class="primary" type="button">开始四面楚歌</button>
+            </section>
+            <aside class="fengshen-rules">
+              <strong>规则</strong>
+              <span>主角 vs 四名电脑敌人</span>
+              <span>四名敌人与主角距离均为 1</span>
+              <span>主角开局额外摸 6 张牌</span>
+              <span>主角体力翻倍，出杀次数 +5</span>
+              <span>绝境：限定技，锦囊指定你时可令其对你无效</span>
             </aside>
           </div>
         </section>
@@ -231,9 +327,49 @@
           </div>
           <div class="library-toolbar">
             <div class="filter-group" id="packFilters"></div>
+            <div class="filter-group ownership-filter" id="heroOwnershipFilters"></div>
             <input id="heroSearch" type="search" placeholder="搜索武将、势力、技能" />
           </div>
           <div id="heroGrid" class="hero-grid"></div>
+        </section>
+
+        <section id="shop" class="panel" aria-label="武将商城">
+          <div class="module-header">
+            <button type="button" class="back-btn" data-back-home>返回</button>
+            <div>
+              <h2>武将商城</h2>
+              <p>基础系列武将 20 铜钱；移动版、一将成名武将 50 铜钱；界限突破不进入商城。</p>
+            </div>
+          </div>
+          <div class="market-toolbar">
+            <strong id="shopSummary">可购买 0 名</strong>
+            <button type="button" data-enter="recruit">去招募</button>
+          </div>
+          <div id="shopGrid" class="hero-grid market-grid"></div>
+        </section>
+
+        <section id="recruit" class="panel" aria-label="武将招募">
+          <div class="module-header">
+            <button type="button" class="back-btn" data-back-home>返回</button>
+            <div>
+              <h2>招募台</h2>
+              <p>招募范围为除界限突破外的所有官方武将；抽到重复武将会返还 3 铜钱。</p>
+            </div>
+          </div>
+          <div class="recruit-layout">
+            <section class="recruit-panel">
+              <span class="label">铜钱招募</span>
+              <h3 id="recruitPoolSummary">招募池 0 名</h3>
+              <div class="recruit-actions">
+                <button id="recruitOnceBtn" class="primary" type="button">招募一次 · 10铜钱</button>
+                <button id="recruitFiveBtn" type="button">招募五次 · 50铜钱</button>
+              </div>
+            </section>
+            <aside class="recruit-panel">
+              <span class="label">最近结果</span>
+              <div id="recruitResult" class="recruit-result"></div>
+            </aside>
+          </div>
         </section>
 
         <section id="custom" class="panel" aria-label="自创武将">
